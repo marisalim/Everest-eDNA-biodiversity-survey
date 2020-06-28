@@ -41,9 +41,8 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 
 This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases, this is an imperfect approach. However, it works reasonably well for taxon discovery. It would require further tuning for to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing. 
 
-These steps are all done by [batching scripts](./WGS_mapping_scripts/):
-- `bwa_batcher.sh` has the bwa commands
-- Generally, I ran these steps with `sbatch run_batcher.sh`
+- [`bwa_batcher.sh`](./WGS_mapping_scripts/bwa_batcher.sh) has the bwa commands
+- Generally, I ran these steps with `sbatch [run_batcher.sh](./WGS_mapping_scripts/run_batcher.sh)`
 - **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. it's not particularly efficient (probably!) for whole genome refs (too many hits, so parsing is slow) but works quickly for mito or chloroplast!
 
 *1. Map to reference*
@@ -55,27 +54,26 @@ These steps are all done by [batching scripts](./WGS_mapping_scripts/):
 - map paired-end reads with `bwa mem`
 - optional step: (not run in pipeline code, but you can run this separately to view mappings in terminal)
     > convert .sam to .bam with `samtools faidx` and `samtools import`
-    
     > sort BAM file with `samtools sort` and `samtools index`
-    
     > view bam file in tview with `samtools tview`
 
 *2. Subset SAM files for 'good' hits*
 
-- `awk '$4 != "0"' [sample].sam > [sample]_hits.txt` to check if there are any reads that mapped, plus associated mapping score info. if the file is blank, then no mapping. The $4 field is the 1-based leftmost mapping position of SAM files. Note the following:
+- `awk '$4 != "0"' [sample].sam > [sample]_hits.txt` to check if there are any reads that mapped, plus associated mapping score info. if the file is blank, then no mapping. Thus, I'm filtering on this field, and removing the rows that have 0's.
 
+The $4 field is the 1-based leftmost mapping position of SAM files. Note the following:
 >> "The first base in a reference sequence has coordinate 1. POS is set as 0 for an unmapped read without coordinate.  If POS is 0, no assumptions can be made about RNAME and CIGAR."
 
 More about SAM files: 
 - https://samtools.github.io/hts-specs/SAMv1.pdf
 - https://davetang.org/wiki/tiki-index.php?page=SAM
 
-Thus, I'm filtering on this field, and removing the rows that have 0's.
-
 *3. Convert filtered SAM file to interleaved fasta file*
-- `samtools fastq`
+
+use: `samtools fastq`
 
 *4a. Assemble interleaved reads with spades*
+- of the reads that mapped to reference, try to generate contigs for blast search
 - this is running pretty quickly because there are usually not very many reads to assemble after the mapping filter
 - doesn't work if there are too few reads to assemble, e.g., 2 reads
 - see explanation of Spades and k-mer assembly: 
@@ -84,7 +82,7 @@ Thus, I'm filtering on this field, and removing the rows that have 0's.
 
 *4b. Option: merge reads if no spades contigs*
 - use BBmerge to produce merged and unmerged reads
-- for the WGS dataset, means you can get a max. 300bp merged read, but likely shorter, but better than the 150bp unpaired read
+- for our 150bp paired-end WGS dataset, means you can get a max. 300bp merged read, but likely shorter, but better than the 150bp unpaired read
 
 *5. Nucleotide blast search for spades contigs and/or merged & unmerged reads*
 - **Edit per your study goals:** note different blast thresholds for percent sequence similarity (`-qcov_hsp_perc`) and percent query coverage (`-perc_identity`), output has top 10 hits per query (`-max_target_seqs`) on lines 40 and 50.
@@ -93,10 +91,10 @@ Thus, I'm filtering on this field, and removing the rows that have 0's.
 - parse to keep best hit per query (sorted by bit score - mostly works, but in some cases, e.g., a tie, you need to manually check)
 
 ## Metabarcoding blast script details <a name="metabarpipeline"></a>
-The metabarcoding data was primarily analyzed in Geneious to generate contigs. After blast search to NCBI nt database, the blast parsing step was conducted with [`metabar_blast_parse.py`](./Metabarcoding_scripts/metabar_blast_parse.py).
+The metabarcoding data was primarily analyzed in Geneious to generate contigs. After blast search to NCBI nt database, the blast parsing step was conducted with [`metabar_blast_parse.py`](./Metabarcoding_scripts/metabar_blast_parse.py). Same parsing logic as for WGS data. 
 
 ## Running the WGS pipeline <a name="runwgs"></a>
-1. Set up blast reference database. For our Everest paper, I set up a local installation of the nt database (unstable connection errors on HPC made remote run erratic):
+1. Set up blast reference database. For our Everest paper, I set up a local installation of the nt database (unstable connection errors on HPC made remote run erratic) with [this script](./nt_wrap.sh). Blast db set up takes a long time (many hours) because nt db is very large; make sure you have enough space to save the database files. Do the following:
 ```
   mkdir NCBI_blast_nt
   cd NCBI_blast_nt
@@ -104,8 +102,6 @@ The metabarcoding data was primarily analyzed in Geneious to generate contigs. A
   # makeblastdb part took about an hr (db files (nhr, nin, nog, nsd, nsi, nsq; index nal) total = 73 Gb)
   
   sbatch nt_wrap.sh
-  
-  # blast db set up takes a long time because nt db is very large..
 ```
 
 2. Edit input paths in the `run_batcher.sh` script. These 4 variables must be edited with correct path/name:
@@ -119,11 +115,13 @@ FQPATH='/gpfs/scratch/mclim/EverestMetaGenomics/METAGEN'
 # path to NCBI blast database
 NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
 ```
-2. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC e.g., : `sbatch run_batcher.sh`. 
+2. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
+
+`sbatch run_batcher.sh`. 
 
 ## Run metabarcoding blast script <a name="runmetabar"></a>
 
-Ran as a bash loop, where `--blastfile` is the blast output (format 6) and the `--queryseqfile` is the contig or read input sequence file for blast search (used to add the sequence to parsed output file), e.g.,:
+Ran [`metabar_blast_parse.py`](./Metabarcoding_scripts/metabar_blast_parse.py) as a bash loop, where `--blastfile` is the blast output (format 6) and the `--queryseqfile` is the contig or read input sequence file for blast search (used to add the sequence to parsed output file), e.g.,:
 ```
 for i in {13..33} 35; do python metabar_blast_parse.py --blastfile ts${i}_barcontig_blastout --queryseqfile ts${i}_metabar_contigs.fasta; done
 ```
