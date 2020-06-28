@@ -119,7 +119,7 @@ FQPATH='/gpfs/scratch/mclim/EverestMetaGenomics/METAGEN'
 # path to NCBI blast database
 NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
 ```
-2. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
+3. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
 
 `sbatch run_batcher.sh`. 
 
