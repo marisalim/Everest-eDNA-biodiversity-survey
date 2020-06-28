@@ -1,6 +1,10 @@
 # EverestMetagenomics2020
 
-Pipeline scripts for analyzing Everest WGS (specifically for any Eukaryota hits) and metabarcoding data
+Pipeline scripts for analyzing Everest WGS (specifically for any Eukaryota hits) and metabarcoding data. These scripts were developed for and accompany the in prep manuscript:
+
+*Assessing the breadth of life in the highest water bodies on Earth’s highest mountain: Analyzing environmental DNA from Mount Everest’s southern flank* 
+
+Marisa C.W. Lim, Anton Seimon, Batya Nightingale, Alex Tait,  Tracie A. Seimon
 
 ## Contents
 1. [Required software](#software)
