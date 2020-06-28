@@ -45,10 +45,6 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 
 This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases, this is an imperfect approach. However, it works reasonably well for taxon discovery. It would require further tuning for to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing. 
 
-- [`bwa_batcher.sh`](./WGS_mapping_scripts/bwa_batcher.sh) has the bwa commands
-- Generally, I ran these steps with `sbatch [run_batcher.sh](./WGS_mapping_scripts/run_batcher.sh)`
-- **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. it's not particularly efficient (probably!) for whole genome refs (too many hits, so parsing is slow) but works quickly for mito or chloroplast!
-
 *1. Map to reference*
 - map to mitochondrial reference or whatever is available (download from NCBI). The goal of this approach is to find Eukaryotic taxa. Since they represent a minority of the WGS data, the goal of this mapping step is to narrow the data down to reads more likely to match Eukaryote references of choice and filter out non-target reads (e.g., bacteria and other microorganisms).
   - note: this entire approach works better with small genomes like mitochondrial or chloroplast references. Quite slow on whole genomes.
@@ -56,6 +52,7 @@ This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS
   - e.g., *Juniperus* chloroplast genome was better for pulling out plant reads, also had bacteria, so filtered blast results to only keep chloroplast gene hits
 
 - map paired-end reads with `bwa mem`
+- [`bwa_batcher.sh`](./WGS_mapping_scripts/bwa_batcher.sh) has the bwa commands
 - optional step: (not run in pipeline code, but you can run this separately to view mappings in terminal)
     > convert .sam to .bam with `samtools faidx` and `samtools import`
     > sort BAM file with `samtools sort` and `samtools index`
@@ -120,6 +117,7 @@ FQPATH='/gpfs/scratch/mclim/EverestMetaGenomics/METAGEN'
 NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
 ```
 3. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
+- **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. it's not particularly efficient (probably!) for whole genome refs (too many hits, so parsing is slow) but works quickly for mito or chloroplast!
 
 `sbatch run_batcher.sh`. 
 
