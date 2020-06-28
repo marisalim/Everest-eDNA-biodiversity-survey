@@ -119,7 +119,7 @@ NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
 3. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
 - **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. it's not particularly efficient (probably!) for whole genome refs (too many hits, so parsing is slow) but works quickly for mito or chloroplast!
 
-`sbatch run_batcher.sh`. 
+`sbatch run_batcher.sh` 
 
 ## Run metabarcoding blast script <a name="runmetabar"></a>
 
