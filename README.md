@@ -1,6 +1,6 @@
 # EverestMetagenomics2020
 
-Pipeline scripts for analyzing Everest WGS (specifically for any Eukaryota hits) and metabarcoding data. These scripts were developed for and accompany the in prep manuscript:
+Pipeline scripts for analyzing Everest WGS (specifically for any Eukaryota hits) and metabarcoding data. These scripts were developed for and accompany the *in prep* manuscript:
 
 *Assessing the breadth of life in the highest water bodies on Earth’s highest mountain: Analyzing environmental DNA from Mount Everest’s southern flank* 
 
