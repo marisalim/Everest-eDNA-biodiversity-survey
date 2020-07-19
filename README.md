@@ -1,6 +1,6 @@
 # EverestMetagenomics2020
 
-Pipeline scripts for analyzing Everest WGS (specifically for any Eukaryota hits) and metabarcoding data. These scripts were developed for and accompany the *in prep* manuscript:
+This repository holds the pipeline scripts we used to analyze Everest WGS (specifically for any Eukaryota hits) and metabarcoding data. These scripts were developed for and accompany the *in prep* manuscript:
 
 *Assessing the breadth of life in the highest water bodies on Earth’s highest mountain: Analyzing environmental DNA from Mount Everest’s southern flank* 
 
@@ -25,7 +25,9 @@ Marisa C.W. Lim, Anton Seimon, Batya Nightingale, Alex Tait,  Tracie A. Seimon
 
 ## Scripts <a name="scripts"></a>
 
-These files were run on an HPC to map WGS reads to reference mitochondrial and chloroplast genomes. All python scripts written for Python3.
+These files were run on an HPC to map WGS reads to reference mitochondrial and chloroplast genomes. All python scripts written for Python3. 
+
+**Disclaimer**: these are the scripts we used; they were developed on a MacOS and are not meant to be an out-of-the-box pipeline. If you would like to use them and have any questions, please post an [issue](https://github.com/marisalim/EverestMetagenomics2020/issues).
 
 [WGS](./WGS_mapping_scripts):
 - BWA mapping commands are in `bwa_batcher.sh`
@@ -117,7 +119,7 @@ FQPATH='/gpfs/scratch/mclim/EverestMetaGenomics/METAGEN'
 NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
 ```
 3. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
-- **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. it's not particularly efficient (probably!) for whole genome refs (too many hits, so parsing is slow) but works quickly for mito or chloroplast!
+- **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. This is not particularly efficient for whole genome refs (too many hits, so parsing is slow) but works quickly for small genomes like mito or chloroplast!
 
 `sbatch run_batcher.sh` 
 
