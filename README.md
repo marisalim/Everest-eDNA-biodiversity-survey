@@ -43,7 +43,7 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 
 ## WGS pipeline details <a name="wgspipeline"></a>
 
-This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases, this is an imperfect approach. However, it works reasonably well for taxon discovery. It would require further tuning for to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing. 
+This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases and from the Everest region, this is an imperfect approach. However, it works reasonably well for taxon discovery. It would require further tuning to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing:
 
 *1. Map to reference*
 - map to mitochondrial reference or whatever is available (download from NCBI). The goal of this approach is to find Eukaryotic taxa. Since they represent a minority of the WGS data, the goal of this mapping step is to narrow the data down to reads more likely to match Eukaryote references of choice and filter out non-target reads (e.g., bacteria and other microorganisms).
