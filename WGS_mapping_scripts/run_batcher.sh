@@ -8,11 +8,11 @@ module load shared
 module load anaconda/2
 module load blast+/2.7.1
 
-REF='/gpfs/scratch/mclim/EverestMetaGenomics/BWA_MAPPING/mito_refs/Chironomus_tepperi_mitogenome.fasta'
+REF='/EverestMetaGenomics/BWA_MAPPING/mito_refs/Chironomus_tepperi_mitogenome.fasta'
 REFNAME='chiro'
 
-FQPATH='/gpfs/scratch/mclim/EverestMetaGenomics/METAGEN'
-NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
+FQPATH='/EverestMetaGenomics/METAGEN'
+NCBI='/EverestMetaGenomics/NCBI_blast_nt'
 
 for i in {13..33} 35
 do
