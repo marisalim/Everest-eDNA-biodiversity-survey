@@ -27,7 +27,7 @@ Marisa C.W. Lim, Anton Seimon, Batya Nightingale, Alex Tait,  Tracie A. Seimon
 
 These files were run on an HPC to map WGS reads to reference mitochondrial and chloroplast genomes. All python scripts written for Python3. 
 
-**Disclaimer**: these are the scripts we used; they were developed on a MacOS and are not meant to be an out-of-the-box pipeline. If you would like to use them and have any questions, please post an [issue](https://github.com/marisalim/EverestMetagenomics2020/issues).
+**Disclaimer**: these are the scripts we used; they were developed on a MacOS and are not meant to be an out-of-the-box pipeline. If you would like to use them and have any questions, please post an [issue](https://github.com/marisalim/EverestMetagenomics2020/issues/new).
 
 [WGS](./WGS_mapping_scripts):
 - BWA mapping commands are in `bwa_batcher.sh`
