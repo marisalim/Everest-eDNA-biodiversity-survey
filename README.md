@@ -136,3 +136,4 @@ At this point in the analysis, I did post-processing of the blast results in R t
   - [compare Everest dataset results](./Scripts_to_compare_dats/compare_eDNAdat_splists.r)
   - generate OTU tables to calculate [alpha diversity stats](./Scripts_to_compare_dats/calc_shannon_index.r) 
   - and make all figures
+  - make heat maps to visualize OTU matrices
