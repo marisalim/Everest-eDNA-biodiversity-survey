@@ -19,8 +19,13 @@ data2 <- melt(Data2_OTU_wgs_microb); colnames(data2) <- c('Site', 'Order', 'NumR
 data3 <- melt(Data3_OTU_metabar); colnames(data3) <- c('Site', 'Order', 'NumReads')
 data5 <- melt(Data5_OTU_wgs_refmapped); colnames(data5) <- c('Site', 'Order', 'NumReads')
 
+# clean up files
+# data1 should not have Stamenopiles (euk)
+data1_clean <- data1[data1$Order!='Stramenopiles', ]
+
+
 # as bar plots
-order.cols.dat1 <- length(unique(data1$Order))
+order.cols.dat1 <- length(unique(data1_clean$Order))
 ordercolors.dat1 <- colorRampPalette(brewer.pal(8, "Set1"))(order.cols.dat1)
 order.cols.dat2 <- length(unique(data2$Order))
 ordercolors.dat2 <- colorRampPalette(brewer.pal(8, "Set1"))(order.cols.dat2)
@@ -29,7 +34,7 @@ ordercolors.dat3 <- colorRampPalette(brewer.pal(8, "Set1"))(order.cols.dat3)
 order.cols.dat5 <- length(unique(data5$Order))
 ordercolors.dat5 <- colorRampPalette(brewer.pal(8, "Set1"))(order.cols.dat5)
 
-ggplot(data1, aes(x=Site, y=NumReads, fill=factor(Order))) +
+ggplot(data1_clean, aes(x=Site, y=NumReads, fill=factor(Order))) +
   geom_bar(stat="identity", colour="black") +
   scale_fill_manual(values=ordercolors.dat1) +
   ggtitle('Data1_OTU_wgs_16s') +
@@ -70,10 +75,10 @@ ggplot(data5, aes(x=Site, y=NumReads, fill=factor(Order))) +
 ggsave('Data5_OTU_wgs_refmapped_barplot.jpg', height=8, width=20, units='in', dpi=600)
 
 # as heat maps
-ggplot(data1, aes(x=Site, y=factor(Order))) +
+ggplot(data1_clean, aes(x=Site, y=factor(Order))) +
   geom_tile(aes(fill=NumReads), col='black') +
   scale_fill_viridis_c(direction=-1,
-                       limits=c(0, max(data1$NumReads))) +
+                       limits=c(0, max(data1_clean$NumReads))) +
   ggtitle('Data1_OTU_wgs_16s') +
   ylab('Taxonomic Order') +
   theme(axis.text.x=element_text(angle=45, hjust=1)) 
