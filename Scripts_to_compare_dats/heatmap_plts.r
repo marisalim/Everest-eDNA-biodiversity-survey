@@ -37,6 +37,7 @@ ordercolors.dat5 <- colorRampPalette(brewer.pal(8, "Set1"))(order.cols.dat5)
 ggplot(data1_clean, aes(x=Site, y=NumReads, fill=factor(Order))) +
   geom_bar(stat="identity", colour="black") +
   scale_fill_manual(values=ordercolors.dat1) +
+  scale_y_continuous(labels=scales::comma) +
   ggtitle('Data1_OTU_wgs_16s') +
   ylab('Number of seq reads') +
   xlab('Sample') +
@@ -49,6 +50,7 @@ ggsave('Data1_OTU_wgs_16s_barplot.jpg', height=8, width=10, units='in', dpi=600)
 ggplot(data2, aes(x=Site, y=NumReads, fill=factor(Order))) +
   geom_bar(stat="identity", colour="black") +
   scale_fill_manual(values=ordercolors.dat2) +
+  scale_y_continuous(labels=scales::comma) +
   ggtitle('Data2_OTU_wgs_microb') +
   ylab('Number of seq reads') +
   xlab('Sample') +
@@ -61,6 +63,7 @@ ggsave('Data2_OTU_wgs_microb_barplot.jpg', height=8, width=10, units='in', dpi=6
 ggplot(data3, aes(x=Site, y=NumReads, fill=factor(Order))) +
   geom_bar(stat="identity", colour="black") +
   scale_fill_manual(values=ordercolors.dat3) +
+  scale_y_continuous(labels=scales::comma) +
   ggtitle('Data3_OTU_metabar') +
   ylab('Number of seq reads') +
   xlab('Sample') +
@@ -73,6 +76,7 @@ ggsave('Data3_OTU_metabar_barplot.jpg', height=8, width=10, units='in', dpi=600)
 ggplot(data5, aes(x=Site, y=NumReads, fill=factor(Order))) +
   geom_bar(stat="identity", colour="black") +
   scale_fill_manual(values=ordercolors.dat5) +
+  scale_y_continuous(labels=scales::comma) +
   ggtitle('Data5_OTU_wgs_refmapped') +
   ylab('Number of seq reads') +
   xlab('Sample') +
@@ -93,7 +97,8 @@ ggplot(data1_clean, aes(x=Site, y=factor(Order))) +
   geom_tile(aes(fill=NumReads), col='grey') +
   scale_fill_gradientn(colors=viridis_pal()(20),
                        limits=c(0, max(data1_clean$NumReads)),
-                       na.value='white') +
+                       na.value='white',
+                       labels=comma) +
   ggtitle('Data1_OTU_wgs_16s') +
   ylab('Taxonomic Order') +
   theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
@@ -105,7 +110,8 @@ ggplot(data2, aes(x=Site, y=factor(Order))) +
   geom_tile(aes(fill=NumReads), col='grey') +
   scale_fill_gradientn(colors=viridis_pal()(20),
                        limits=c(0, max(data2$NumReads)),
-                       na.value='white') +
+                       na.value='white',
+                       labels=comma) +
   ggtitle('Data2_OTU_wgs_microb') +
   ylab('Taxonomic Order') +
   theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
@@ -117,7 +123,8 @@ ggplot(data3, aes(x=Site, y=factor(Order))) +
   geom_tile(aes(fill=NumReads), col='grey') +
   scale_fill_gradientn(colors=viridis_pal()(20),
                        limits=c(0, max(data3$NumReads)),
-                       na.value='white') +
+                       na.value='white',
+                       labels=comma) +
   ggtitle('Data3_OTU_metabar') +
   ylab('Taxonomic Order') +
   theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
@@ -129,7 +136,8 @@ ggplot(data5, aes(x=Site, y=factor(Order))) +
   geom_tile(aes(fill=NumReads), col='grey') +
   scale_fill_gradientn(colors=viridis_pal()(20),
                        limits=c(0, max(data5$NumReads)),
-                       na.value='white') +
+                       na.value='white',
+                       labels=comma) +
   ggtitle('Data5_OTU_wgs_refmapped') +
   ylab('Taxonomic Order') +
   theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
