@@ -4,6 +4,7 @@
 library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
+library(scales)
 setwd('./Desktop/Old projects/everestWGS/OTUtables_makeheatmaps/')
 
 # read in files
@@ -20,11 +21,10 @@ data3 <- melt(Data3_OTU_metabar); colnames(data3) <- c('Site', 'Order', 'NumRead
 data5 <- melt(Data5_OTU_wgs_refmapped); colnames(data5) <- c('Site', 'Order', 'NumReads')
 
 # clean up files
-# data1 should not have Stamenopiles (euk)
+# data1 should not have Stamenopiles (euk) for the singlem results
 data1_clean <- data1[data1$Order!='Stramenopiles', ]
 
-
-# as bar plots
+# ---- as bar plots ----
 order.cols.dat1 <- length(unique(data1_clean$Order))
 ordercolors.dat1 <- colorRampPalette(brewer.pal(8, "Set1"))(order.cols.dat1)
 order.cols.dat2 <- length(unique(data2$Order))
@@ -41,7 +41,9 @@ ggplot(data1_clean, aes(x=Site, y=NumReads, fill=factor(Order))) +
   ylab('Number of seq reads') +
   xlab('Sample') +
   guides(fill=guide_legend(title="Order")) +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data1_OTU_wgs_16s_barplot.jpg', height=8, width=10, units='in', dpi=600)
 
 ggplot(data2, aes(x=Site, y=NumReads, fill=factor(Order))) +
@@ -51,7 +53,9 @@ ggplot(data2, aes(x=Site, y=NumReads, fill=factor(Order))) +
   ylab('Number of seq reads') +
   xlab('Sample') +
   guides(fill=guide_legend(title="Order")) +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data2_OTU_wgs_microb_barplot.jpg', height=8, width=10, units='in', dpi=600)
 
 ggplot(data3, aes(x=Site, y=NumReads, fill=factor(Order))) +
@@ -61,7 +65,9 @@ ggplot(data3, aes(x=Site, y=NumReads, fill=factor(Order))) +
   ylab('Number of seq reads') +
   xlab('Sample') +
   guides(fill=guide_legend(title="Order")) +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data3_OTU_metabar_barplot.jpg', height=8, width=10, units='in', dpi=600)
 
 ggplot(data5, aes(x=Site, y=NumReads, fill=factor(Order))) +
@@ -71,42 +77,62 @@ ggplot(data5, aes(x=Site, y=NumReads, fill=factor(Order))) +
   ylab('Number of seq reads') +
   xlab('Sample') +
   guides(fill=guide_legend(title="Order")) +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data5_OTU_wgs_refmapped_barplot.jpg', height=8, width=20, units='in', dpi=600)
 
-# as heat maps
+# ---- as heat maps ----
+# make 0 counts NA's so they can be plotted as white boxes in tile plots
+data1_clean[data1_clean == 0] <- NA
+data2[data2==0] <- NA
+data3[data3==0] <- NA
+data5[data5==0] <- NA
+
 ggplot(data1_clean, aes(x=Site, y=factor(Order))) +
-  geom_tile(aes(fill=NumReads), col='black') +
-  scale_fill_viridis_c(direction=-1,
-                       limits=c(0, max(data1_clean$NumReads))) +
+  geom_tile(aes(fill=NumReads), col='grey') +
+  scale_fill_gradientn(colors=viridis_pal()(20),
+                       limits=c(0, max(data1_clean$NumReads)),
+                       na.value='white') +
   ggtitle('Data1_OTU_wgs_16s') +
   ylab('Taxonomic Order') +
-  theme(axis.text.x=element_text(angle=45, hjust=1)) 
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data1_OTU_wgs_16s_heatmap.jpg', height=8, width=10, units='in', dpi=600)
 
 ggplot(data2, aes(x=Site, y=factor(Order))) +
-  geom_tile(aes(fill=NumReads), col='black') +
-  scale_fill_viridis_c(direction=-1,
-                       limits=c(0, max(data2$NumReads))) +
+  geom_tile(aes(fill=NumReads), col='grey') +
+  scale_fill_gradientn(colors=viridis_pal()(20),
+                       limits=c(0, max(data2$NumReads)),
+                       na.value='white') +
   ggtitle('Data2_OTU_wgs_microb') +
   ylab('Taxonomic Order') +
-  theme(axis.text.x=element_text(angle=45, hjust=1)) 
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data2_OTU_wgs_microb_heatmap.jpg', height=8, width=10, units='in', dpi=600)
 
 ggplot(data3, aes(x=Site, y=factor(Order))) +
-  geom_tile(aes(fill=NumReads), col='black') +
-  scale_fill_viridis_c(direction=-1,
-                       limits=c(0, max(data3$NumReads))) +
+  geom_tile(aes(fill=NumReads), col='grey') +
+  scale_fill_gradientn(colors=viridis_pal()(20),
+                       limits=c(0, max(data3$NumReads)),
+                       na.value='white') +
   ggtitle('Data3_OTU_metabar') +
   ylab('Taxonomic Order') +
-  theme(axis.text.x=element_text(angle=45, hjust=1)) 
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data3_OTU_metabar_heatmap.jpg', height=8, width=10, units='in', dpi=600)
 
 ggplot(data5, aes(x=Site, y=factor(Order))) +
-  geom_tile(aes(fill=NumReads), col='black') +
-  scale_fill_viridis_c(direction=-1,
-                       limits=c(0, max(data5$NumReads))) +
+  geom_tile(aes(fill=NumReads), col='grey') +
+  scale_fill_gradientn(colors=viridis_pal()(20),
+                       limits=c(0, max(data5$NumReads)),
+                       na.value='white') +
   ggtitle('Data5_OTU_wgs_refmapped') +
   ylab('Taxonomic Order') +
-  theme(axis.text.x=element_text(angle=45, hjust=1)) 
+  theme(axis.text.x=element_text(angle=45, hjust=1, size=10),
+        axis.text.y=element_text(size=10),
+        axis.title=element_text(size=15, face='bold'))
 ggsave('Data5_OTU_wgs_refmapped_heatmap.jpg', height=15, width=10, units='in', dpi=600)
