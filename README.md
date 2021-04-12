@@ -1,15 +1,15 @@
 # EverestMetagenomics2020
 
-This repository holds the pipeline scripts we used to analyze Everest WGS (specifically for any Eukaryota hits) and metabarcoding data. These scripts were developed for and accompany the *in prep* manuscript:
+This repository holds the scripts we used to analyze Everest WGS (for bacterial and eukaryote hits) and metabarcoding data. 
 
-*Assessing the breadth of life in the highest water bodies on Earth’s highest mountain: Analyzing environmental DNA from Mount Everest’s southern flank* 
-
-Marisa C.W. Lim, Anton Seimon, Batya Nightingale, Alex Tait,  Tracie A. Seimon
+<!---These scripts were developed for and accompany the *in prep* manuscript:
+*Estimating Biodiversity Using Environmental DNA Analysis Across the Tree of Life from Mount Everest’s Southern Flank*
+Marisa C.W. Lim, Batya Nightingale, Charles Xu, Adam Solon, Nick Dragone, Steve Schmidt, Stephan Halloy, Alex Tait, Sandra Elvin, Aurora Elmore, Anton Seimon, and Tracie A. Seimon--->
 
 ## Contents
 1. [Required software](#software)
 1. [Scripts](#scripts)
-1. [WGS pipeline details](#wgspipeline)
+1. [WGS eukaryote pipeline details](#wgspipeline)
 1. [Metabarcoding blast script details](#metabarpipeline)
 1. [Run WGS pipeline](#runwgs)
 1. [Run metabarcoding blast script](#runmetabar)
@@ -22,6 +22,7 @@ Marisa C.W. Lim, Anton Seimon, Batya Nightingale, Alex Tait,  Tracie A. Seimon
     spades [SPAdes genome assembler v3.10.1]
     BBMerge [v38.22] (part of BBtools suite)
     blastn [Nucleotide-Nucleotide BLAST 2.7.1+]
+    singleM [v0.13.2]
 
 ## Scripts <a name="scripts"></a>
 
@@ -29,7 +30,11 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 
 **Disclaimer**: these are the scripts we used; they were developed on a MacOS and are not meant to be an out-of-the-box pipeline. If you would like to use them and have any questions, please post an [issue](https://github.com/marisalim/EverestMetagenomics2020/issues/new).
 
-[WGS](./WGS_mapping_scripts):
+[WGS-bacteria](./SingleM_scripts):
+- batch scripts for running default singleM ribosomal panel: `singlem_batch.sh`
+- batch scripts for running singleM with Greengenes database: `singlem_16s_R1s_batch.sh` and `singlem_16s_R2s_batch.sh`
+
+[WGS-eukaryotes](./WGS_mapping_scripts):
 - BWA mapping commands are in `bwa_batcher.sh`
 - Blast parsing commands are in `mapblast_parse.py`
 - primary batch script is `run_batcher.sh`
@@ -41,9 +46,9 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 
 [Comparing results from metabarcoding vs. WGS](./Scripts_to_compare_dats):
 - compare datasets: `compare_eDNAdat_splists.r`
-- calculate diversity stats: `calc_shannon_index.r`
+- barplots and heatmaps: `heatmap_plts.r`
 
-## WGS pipeline details <a name="wgspipeline"></a>
+## WGS eukaryote pipeline details <a name="wgspipeline"></a>
 
 This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases and from the Everest region, this is an imperfect approach. However, it works reasonably well for taxon discovery. It would require further tuning to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing:
 
@@ -134,6 +139,4 @@ for i in {13..33} 35; do python metabar_blast_parse.py --blastfile ts${i}_barcon
 At this point in the analysis, I did post-processing of the blast results in R to:
   - add additional taxonomy information using R package `taxize` to [WGS data](./WGS_mapping_scripts/wgs_blast_dataviz.r) and to [metabarcoding data](./Metabarcoding_scripts/metabar_blast_dataviz.r)
   - [compare Everest dataset results](./Scripts_to_compare_dats/compare_eDNAdat_splists.r)
-  - generate OTU tables to calculate [alpha diversity stats](./Scripts_to_compare_dats/calc_shannon_index.r) 
-  - and make all figures
-  - make heat maps to visualize OTU matrices
+  - [make heat maps to visualize OTU matrices](./Scripts_to_compare_dats/heatmap_plts.r)
