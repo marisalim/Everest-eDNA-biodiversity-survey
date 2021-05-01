@@ -1,4 +1,4 @@
-# EverestMetagenomics2020
+# Everest eDNA Biodiversity Survey Analysis
 
 This repository holds the scripts we used to analyze Everest WGS (for bacterial and eukaryote hits) and metabarcoding data. 
 
