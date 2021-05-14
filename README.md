@@ -39,6 +39,7 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 - Blast parsing commands are in `mapblast_parse.py`
 - primary batch script is `run_batcher.sh`
 - add taxonomic info, plot results: `wgs_blast_dataviz.r`
+- an example [snakemake workflow for this pipeline](./WGS_mapping_scripts/Snakemake_ver)
 
 [metabarcoding](./Metabarcoding_scripts/):
 - Blast parsing commands are in `metabar_blast_parse.py`
@@ -50,7 +51,7 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 
 ## WGS eukaryote pipeline details <a name="wgspipeline"></a>
 
-This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases and from the Everest region, this is an imperfect approach. However, it works reasonably well for taxon discovery. It would require further tuning to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing:
+This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases and from the Everest region, this is an imperfect approach. However, it works reasonably well for taxon discovery and exploration. It would require further tuning to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing:
 
 *1. Map to reference*
 - map to mitochondrial reference or whatever is available (download from NCBI). The goal of this approach is to find Eukaryotic taxa. Since they represent a minority of the WGS data, the goal of this mapping step is to narrow the data down to reads more likely to match Eukaryote references of choice and filter out non-target reads (e.g., bacteria and other microorganisms).
@@ -102,26 +103,26 @@ use: `samtools fastq`
 The metabarcoding data was primarily analyzed in Geneious to generate contigs. After blast search to NCBI nt database, the blast parsing step was conducted with [`metabar_blast_parse.py`](./Metabarcoding_scripts/metabar_blast_parse.py). Same parsing logic as for WGS data. 
 
 ## Running the WGS pipeline <a name="runwgs"></a>
-1. Set up blast reference database. For our Everest paper, I set up a local installation of the nt database (unstable connection errors on HPC made remote run erratic) with [this script](./nt_wrap.sh). Blast db set up takes a long time (many hours) because nt db is very large; make sure you have enough space to save the database files. Do the following:
+1. Set up blast reference database. For our Everest paper, I set up a local installation of the nt database (unstable connection errors on HPC made remote run option erratic) with [this script](./nt_wrap.sh). Blast db set up takes a long time (many hours) because nt db is very large; make sure you have enough space to save the database files. Do the following:
 ```
-  mkdir NCBI_blast_nt
-  cd NCBI_blast_nt
-  # download of nt.gz takes about 40 minutes (compressed file is 65Gb)
-  # makeblastdb part took about an hr (db files (nhr, nin, nog, nsd, nsi, nsq; index nal) total = 73 Gb)
+mkdir NCBI_blast_nt
+cd NCBI_blast_nt
+# download of nt.gz takes about 40 minutes (compressed file is 65Gb)
+# makeblastdb part took about an hr (db files (nhr, nin, nog, nsd, nsi, nsq; index nal) total = 73 Gb)
   
-  sbatch nt_wrap.sh
+sbatch nt_wrap.sh
 ```
 
 2. Edit input paths in the `run_batcher.sh` script. These 4 variables must be edited with correct path/name:
 ```
 # path to reference genome fasta file
-REF='/gpfs/scratch/mclim/EverestMetaGenomics/BWA_MAPPING/mito_refs/Chironomus_tepperi_mitogenome.fasta'
+REF='EverestMetaGenomics/BWA_MAPPING/mito_refs/Chironomus_tepperi_mitogenome.fasta'
 # abbreviated name for reference (used for output file naming)
 REFNAME='chiro'
 # path to sequence read fastq files
-FQPATH='/gpfs/scratch/mclim/EverestMetaGenomics/METAGEN'
+FQPATH='EverestMetaGenomics/METAGEN'
 # path to NCBI blast database
-NCBI='/gpfs/scratch/mclim/EverestMetaGenomics/NCBI_blast_nt'
+NCBI='EverestMetaGenomics/NCBI_blast_nt'
 ```
 3. Run script. The blast parsing step, in particular, takes a while, so I recommend running this script on an HPC.
 - **Note on timing:** the entire pipeline can take 20-48+ hours to run with mitochondrial or chloroplast genome refs; takes upwards of a week or more for full genomes - the rate limiting step is my blast parser. This is not particularly efficient for whole genome refs (too many hits, so parsing is slow) but works quickly for small genomes like mito or chloroplast!
