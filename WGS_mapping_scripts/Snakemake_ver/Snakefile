@@ -4,7 +4,7 @@
 # note that this workflow requires all files to exist with contents to do the final parsing rule.
 # will not work when there are no blast results so the mapblast_parse.py was modified to create temp files
 
-# refs (renaming - seems to use wildcards, need to use the same pattern in the file naming)
+# refs (renamed files to use the same pattern in the in/out file naming)
 # "mito_refs/Gallus_gallus_mitogenome.fasta" > gallusmito.fasta
 # "mito_refs/Juniperus_recurva_chloroplastgenome.fasta" > junichl.fasta
 # "mito_refs/Rotaria_rotatoria_mitogenome.fasta" > rotimito.fasta
@@ -15,7 +15,7 @@ mysamps = ['32', '33']
 myrefs = ['junichl', 'gallusmito', 'rotimito','epiomito']
 idx_ext = ['sa', 'amb', 'ann', 'pac', 'bwt']
 idx_ext2 = ['ndb', 'nhr', 'nin', 'nog', 'nos', 'not', 'ntf', 'nsq', 'nto']
-ncbi_db = "blast_ref/rhodo_chloroplast" #this is a placeholder reference for the blast step
+ncbi_db = "blast_ref/rhodo_chloroplast" #this is a placeholder reference for the blast step, can be nt db instead 
 
 rule all:
     input:
