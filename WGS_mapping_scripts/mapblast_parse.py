@@ -31,7 +31,7 @@ parser = argparse.ArgumentParser(
     # if spades contigs
     --queryseqfile contigs.fasta
     # if merged + unmerged reads
-    --queryseqfilee ts13chiro.fasta
+    --queryseqfile ts13chiro.fasta
     '''
 )
 parser.add_argument('--ref', help='ref species for BWA mapping', required=True)
@@ -97,11 +97,9 @@ if os.stat(arg_dict['blastfile']).st_size != 0:
     tophit_df2['ref'] = arg_dict['ref']
     tophit_df2['querytype'] = arg_dict['querytype']
     tophit_df2['sampleID'] = sampID
-    tophit_df3 = tophit_df2.loc[:, ['ref', 'sampleID', 'querytype', 'queryID', 'genbankID', 'per_id', 'aln_len', 'num_mismatch', 'evalue', 'bitscore', 'qlen', 'qcovs', 'stitle', 'genus', 'species', 'subspecies', 'queryseq']] #don't need the start/end values
-    # print(tophit_df3.head())
 
     ## output table
-    tophit_df3.to_csv(str(arg_dict['blastfile'])+'_parsed.txt', sep='\t', index=False)
+    tophit_df2.to_csv(str(arg_dict['blastfile'])+'_parsed.txt', sep='\t', index=False)
 
 # if file is empty
 elif os.stat(arg_dict['blastfile']).st_size == 0:
