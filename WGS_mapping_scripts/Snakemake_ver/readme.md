@@ -21,4 +21,4 @@ Snakefile can be run as:
 snakemake -p -j 1 all
 ```
 
-
+Final parsed blast output files will be in a directory called `parsed_blast_outs`.
