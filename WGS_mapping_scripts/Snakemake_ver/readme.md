@@ -14,7 +14,7 @@ Required inputs:
    - WGS files (R1 and R2 fastq) in a directory called `input_fqs`
    - mitochondria/chloroplast genome fasta files for BWA mapping in a directory called `mito_refs`
    - reference for blast search (NCBI nt database or other ref set) in a directory called `blast_ref`
-   - `mapblast_parse.py`
+   - [`mapblast_parse.py`](./mapblast_parse.py)
 
 Snakefile can be run as:
 ```
