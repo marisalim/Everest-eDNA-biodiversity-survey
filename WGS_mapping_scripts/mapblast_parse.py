@@ -32,6 +32,7 @@ parser = argparse.ArgumentParser(
     --queryseqfile contigs.fasta
     # if merged + unmerged reads
     --queryseqfile ts13chiro.fasta
+    --output ./
     '''
 )
 parser.add_argument('--ref', help='ref species for BWA mapping', required=True)
@@ -39,6 +40,7 @@ parser.add_argument('--samp', help='sample ID', required=True)
 parser.add_argument('--querytype', help='contig or read', required=True)
 parser.add_argument('--blastfile', help='blast output file name', required=True)
 parser.add_argument('--queryseqfile', help='contig or read input sequence file for blast search', required=True)
+parser.add_argument('--output', help='output file name', required=True)
 
 args=parser.parse_args()
 arg_dict=vars(args)
@@ -59,12 +61,12 @@ if os.stat(arg_dict['blastfile']).st_size != 0:
         # print(myquery)
         query_subset = blastdat.loc[blastdat['queryID'] == myquery].sort_values(by=['bitscore'], ascending=False)[0:1]
         stitle_len = len(query_subset.loc[:, 'stitle'].values[0].split(' '))
-        print(stitle_len)
+        # print(stitle_len)
         if(stitle_len >= 3):
             query_subset['genus'] = query_subset.loc[:, 'stitle'].values[0].split(' ')[0]
             query_subset['species'] = query_subset.loc[:, 'stitle'].values[0].split(' ')[1]
             query_subset['subspecies'] = query_subset.loc[:, 'stitle'].values[0].split(' ')[2]
-            print(query_subset)
+            # print(query_subset)
 
             # Use query ID to grab sequence and add to table
             if os.stat(arg_dict['queryseqfile']).st_size != 0:
@@ -99,8 +101,11 @@ if os.stat(arg_dict['blastfile']).st_size != 0:
     tophit_df2['sampleID'] = sampID
 
     ## output table
-    tophit_df2.to_csv(str(arg_dict['blastfile'])+'_parsed.txt', sep='\t', index=False)
+    tophit_df2.to_csv(str(arg_dict['output']), sep='\t', index=False)
 
 # if file is empty
+# the file must exist for snakemake workflow, so creating a temp file as a placeholder
 elif os.stat(arg_dict['blastfile']).st_size == 0:
-    print('Empty file. No blast results to parse.')
+    print('Empty file. No blast results to parse. Making temp file.')
+    with open(str(arg_dict['output']), 'w') as f:
+        f.write('No blast results to parse. Making temp file.')
