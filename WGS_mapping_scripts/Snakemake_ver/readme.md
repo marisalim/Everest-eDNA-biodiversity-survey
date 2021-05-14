@@ -1,5 +1,7 @@
 This is an example of a snakemake workflow for the BWA mapping through nucleotide blast parsing steps.
 
+![](./dag_metagen.png)
+
 ### Software
 - Software environment can be installed using conda (i.e., miniconda) and the [`environment.yml`](./environment.yml) file. 
 ```
@@ -22,3 +24,10 @@ snakemake -p -j 1 all
 ```
 
 Final parsed blast output files will be in a directory called `parsed_blast_outs`.
+
+#### extras
+The diagram was made with `graphviz`:
+```
+conda install graphviz
+snakemake --dag ts32juni_blastout_parsed.txt | dot -Tpng > dag_metagen.png
+```
