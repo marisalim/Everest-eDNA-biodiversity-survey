@@ -2,6 +2,8 @@ This is an example of a snakemake workflow for the BWA mapping through nucleotid
 
 ![](./dag_metagen.png)
 
+This snakemake workflow doesn't include the spades assembly step as in most cases there were not enough reads to form contig files, so this workflow checks blast match to reads (bbmerged to merge paired reads when possible).
+
 ### Software
 - Software environment can be installed using conda (i.e., miniconda) and the [`environment.yml`](./environment.yml) file. 
 ```
