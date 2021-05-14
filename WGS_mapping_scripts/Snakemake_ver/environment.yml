@@ -1,0 +1,12 @@
+name: metagen_bwa
+channels:
+- conda-forge
+- bioconda
+- defaults
+dependencies:
+- bwa
+- snakemake-minimal=6.3.0
+- samtools=1.10
+- blast=2.11.0
+- pandas
+- biopython
