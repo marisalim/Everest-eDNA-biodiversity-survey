@@ -1,0 +1,131 @@
+# this is an example of how a snakemake workflow would work for the WGS mapping project
+# to explore the Eukaryotic biodiversity in samples
+# 2 samples, 4 refs
+# note that this workflow requires all files to exist with contents to do the final parsing rule.
+# will not work when there are no blast results so the mapblast_parse.py was modified to create temp files
+
+# refs (renaming - seems to use wildcards, need to use the same pattern in the file naming)
+# "mito_refs/Gallus_gallus_mitogenome.fasta" > gallusmito.fasta
+# "mito_refs/Juniperus_recurva_chloroplastgenome.fasta" > junichl.fasta
+# "mito_refs/Rotaria_rotatoria_mitogenome.fasta" > rotimito.fasta
+# "mito_refs/Epiophlebia_superstes_mitogenome" > epiomito.fasta
+
+# define samples, refs, file extensions
+mysamps = ['32', '33']
+myrefs = ['junichl', 'gallusmito', 'rotimito','epiomito']
+idx_ext = ['sa', 'amb', 'ann', 'pac', 'bwt']
+idx_ext2 = ['ndb', 'nhr', 'nin', 'nog', 'nos', 'not', 'ntf', 'nsq', 'nto']
+ncbi_db = "blast_ref/rhodo_chloroplast" #this is a placeholder reference for the blast step
+
+rule all:
+    input:
+        expand("parsed_blast_outs/ts{sample}_{ref}_blastout_parsed.txt", sample=mysamps, ref=myrefs)
+
+rule index_ref:
+    message: "index reference genome..."
+    input:
+        juni = "mito_refs/junichl.fasta",
+        gallus = "mito_refs/gallusmito.fasta",
+        roti = "mito_refs/rotimito.fasta",
+        epio = "mito_refs/epiomito.fasta"
+    output:
+        expand("mito_refs/{aref}.fasta.{ext}", ext=idx_ext, aref=myrefs)
+    shell:
+        """
+        bwa index {input.juni}
+        bwa index {input.gallus}
+        bwa index {input.roti}
+        bwa index {input.epio}
+        """
+
+# for this example, using 100,000 reads per file instead of full file
+rule map_reads:
+    message: "map reads..."
+    input:
+        read1 = "input_fqs/{sample}_R1_100k.fastq",
+        read2 = "input_fqs/{sample}_R2_100k.fastq",
+        genome = "mito_refs/{ref}.fasta",
+        index_files = expand("mito_refs/{aref}.fasta.{ext}", ext=idx_ext, aref=myrefs)
+    output:
+        "bwa_ts{sample}_{ref}.sam"
+    log:
+        "logs/bwa_mem/{sample}_{ref}.log"
+    shell:
+        "(bwa mem {input.genome} {input.read1} {input.read2} > {output}) 2> {log}"
+
+rule format_sam:
+    message: "filter sam file..."
+    input:
+        "bwa_ts{sample}_{ref}.sam"
+    output:
+        "ts{sample}_{ref}_hits.sam"
+    shell:
+        """
+        awk '$4 != "0"' {input} > {output}
+        """
+
+rule sam_to_fq:
+    message: "convert sam to fastq..."
+    input:
+        "ts{sample}_{ref}_hits.sam"
+    output:
+        "ts{sample}_{ref}hits.fastq"
+    shell:
+        "samtools fastq {input} > {output}"
+
+rule merge_reads:
+    message: "merge any paired reads to blastn them as one, longer query..."
+    input:
+        "ts{sample}_{ref}hits.fastq"
+    output:
+        merged="ts{sample}_{ref}hits_merged.fq",
+        unmerged="ts{sample}_{ref}hits_unmerged.fq",
+        catreads="ts{sample}_{ref}hits_bbreads.fq",
+        forblast="ts{sample}_{ref}hits.fasta"
+    shell:
+        """
+        ~/Downloads/bbmap/bbmerge.sh in={input} out={output.merged} outu={output.unmerged}
+
+        cat {output.merged} {output.unmerged} > {output.catreads}
+
+        cat {output.catreads} | paste - - - - | sed 's/^@/>/g' | cut -f1-2 | tr '\t' '\n' | cut -d ' ' -f1 > {output.forblast}
+        """
+
+rule makeblast_db:
+    message: "create blast database..."
+    input:
+        ncbi_db+".fasta"
+    output:
+        expand(ncbi_db+'.fasta.{ext}', ext=idx_ext2)
+    shell:
+        "makeblastdb -in {input} -dbtype nucl -parse_seqids"
+
+rule blast:
+    message: "run blast..."
+    input:
+        reads="ts{sample}_{ref}hits.fasta",
+        database=ncbi_db+".fasta",
+        db_idx=expand(ncbi_db+'.fasta.{ext}', ext=idx_ext2)
+    output:
+        blastout="ts{sample}_{ref}_blastout"
+    shell:
+        """
+        blastn -db {input.database} -max_target_seqs 10 -outfmt "6 std qlen qcovs stitle" -out {output.blastout} -qcov_hsp_perc 90 -perc_identity 80 -query {input.reads}
+        """
+
+rule parse_blast:
+    message: "parse blast output..."
+    input:
+        blastfile="ts{sample}_{ref}_blastout",
+        database=ncbi_db+".fasta"
+    params:
+        ref="{ref}",
+        samp="ts{sample}"
+    output:
+        parsedout="parsed_blast_outs/ts{sample}_{ref}_blastout_parsed.txt"
+    shell:
+        """
+        python mapblast_parse.py --ref {params.ref} --samp {params.samp} \
+        --blastfile {input.blastfile} --queryseqfile {input.database} \
+        --querytype read --output {output.parsedout}
+        """
