@@ -1,11 +1,9 @@
 # make heat maps for paper
-# using OTU tables from Batya
 
 library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
 library(scales)
-setwd('./Desktop/Old projects/everestWGS/OTUtables_makeheatmaps/')
 
 # read in files
 OTUtables <- list.files(path='.', pattern='.csv', full.names=T)
