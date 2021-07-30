@@ -28,7 +28,7 @@ Marisa C.W. Lim, Batya Nightingale, Charles Xu, Adam Solon, Nick Dragone, Steve 
 
 These files were run on an HPC to map WGS reads to reference mitochondrial and chloroplast genomes. All python scripts written for Python3. 
 
-**Disclaimer**: these are the scripts we used; they were developed on a MacOS and are not meant to be an out-of-the-box pipeline. If you would like to use them and have any questions, please post an [issue](https://github.com/marisalim/EverestMetagenomics2020/issues/new).
+**Disclaimer**: these are the scripts we used; they were developed on a MacOS and are not meant to be an out-of-the-box pipeline. If you would like to use them and have any questions, please post an [issue](https://github.com/marisalim/Everest-eDNA-biodiversity-survey/issues/new).
 
 [WGS-bacteria](./SingleM_scripts):
 - batch scripts for running default singleM ribosomal panel: `singlem_batch.sh`
