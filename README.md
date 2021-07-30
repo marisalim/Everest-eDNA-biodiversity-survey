@@ -49,6 +49,8 @@ These files were run on an HPC to map WGS reads to reference mitochondrial and c
 - compare datasets: `compare_eDNAdat_splists.r`
 - barplots and heatmaps: `heatmap_plts.r`
 
+[Asymptotic regression model script](./everest.R)
+
 ## WGS eukaryote pipeline details <a name="wgspipeline"></a>
 
 This pipeline was designed to specifically pull out Eukaryotic taxa from the WGS sequencing data. Due to the incomplete status of Eukaryotic taxonomic representation in reference sequence databases and from the Everest region, this is an imperfect approach. However, it works reasonably well for taxon discovery and exploration. It would require further tuning to improve completeness in taxon identification. Here are some details about what the various pipeline scripts are doing:
