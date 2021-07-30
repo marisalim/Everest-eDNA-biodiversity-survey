@@ -1,5 +1,7 @@
 # Everest eDNA Biodiversity Survey Analysis
 
+[![DOI](https://zenodo.org/badge/275657470.svg)](https://zenodo.org/badge/latestdoi/275657470)
+
 This repository holds the scripts we used to analyze Everest WGS (for bacterial and eukaryote hits) and metabarcoding data. 
 
 <!---These scripts were developed for and accompany the *in prep* manuscript:
